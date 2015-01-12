@@ -1,0 +1,15 @@
+# ArestyRaceDetector
+
+This a project I completed during the Summer of 2014 as a Research Assistant at the Architecture and Programming Languages Lab at Rutgers University. My task was to create a precise race detector using Intel's PIN API that detects data races in simple C/C++ programs. To do this, I had to detect if there was a happens-before relationship between each read-write or write-write operation to a single memory locationn. To detect the happens-before relationship, I used a vector-clock algorithm similar to the one mentioned in [FastTrack](https://users.soe.ucsc.edu/~cormac/papers/pldi09.pdf).
+
+**Abstract:** *Modern computers use multi-core processors and to get optimal performance, a programmer has to write multithreaded code. However, writing correct multi-threaded code is difficult because unintended interactions between two threads can cause errors.  The occurrence of data races, in which two threads simultaneously read and write the same shared memory location, is one such error.
+In this project, we built a race detector for C++ programs using PinTool. This tool uses a simplified version of the FastTrack vector-clock algorithm in order to detect if a happens-before relationship occurs between two accesses to the same memory location. Vector clocks are mechanisms used to show the partial ordering of events in a distributed system. A happens-before relationship between event A on thread X and event B on thread Y occurs if every element in thread X’s vector clock is less than the corresponding elements in thread Y’s vector clock. If there is not a happens-before relationship, and at least one is a write, we declare this as a data race. In other words, a data race occurs when two events access the same location with at least one of them being a write operation and there are no locks in the program to control the ordering of the events. An advanced feature of this tool that separates it from many other data race detectors of this type is that it detects the races in an online fashion. This means that it captures the race as it is occurring, an attribute that will facilitate debugging by software developers.
+We tested this tool on a few, simple C/C++ programs that were categorized by either known to being race-free or known to have the potential for data races and we found out that we were able to discover data races in such programs as soon as they happen.*
+
+
+*Notes*: `racedetector.cpp` is the main race detector which takes a binary executable as input and determines if there is a data race or not. `racetest.c` is the program in which all the functions for an imaginary bank program are defined and those functions can be rearranged in the main method to simulate different race scenarios. `MyArestPosterPDF.pdf` is the PDF version of the poster I presented at the Rutgers Aresty Poster Symposium in August 2014 to various faculty, students, and parents. 
+
+Acknowledgement
+================
+
+I'd like to cknowledge Dr. Santosh Nagarakatte, Principal Investigator of the Architecture and Programming Languages at Rutgers University and Ibrahim Umar for their help with this project.
