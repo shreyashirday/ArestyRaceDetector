@@ -211,7 +211,7 @@ VOID docountW(VOID*addr,THREADID threadid){
 
 
 VOID CreateLockClock(VOID *ptr){
-        v_clock *clock = create_clock();
+    v_clock *clock = create_clock();
     std::tr1::unordered_map<VOID*,v_clock*>::const_iterator lockgot = lockhashtable.find(ptr);
     if(lockgot == lockhashtable.end()){
         numLocks++;
@@ -226,18 +226,18 @@ VOID CreateLockClock(VOID *ptr){
 
 VOID AcquireLock(VOID*ptr,THREADID threadid){
  
-  std::tr1::unordered_map<VOID*,v_clock*>::const_iterator lockgot = lockhashtable.find(ptr);
-std::tr1::unordered_map<THREADID,v_clock*>::const_iterator threadgot = threadhashtable.find(threadid);
+	std::tr1::unordered_map<VOID*,v_clock*>::const_iterator lockgot = lockhashtable.find(ptr);
+	std::tr1::unordered_map<THREADID,v_clock*>::const_iterator threadgot = threadhashtable.find(threadid);
 
-    slock++;
-       if(lockgot != lockhashtable.end()){
+    	slock++;
+       	if(lockgot != lockhashtable.end()){
  
-        for(int i = 0; i < 3; i++){
-            if(lockgot->second->c[i] > threadgot->second->c[i]){
-                threadgot->second->c[i]  = lockgot->second->c[i];
-            }
-        }
-    }
+        	for(int i = 0; i < 3; i++){
+            		if(lockgot->second->c[i] > threadgot->second->c[i]){
+                		threadgot->second->c[i]  = lockgot->second->c[i];
+            		}
+        	}
+	 }
     
   
     
@@ -246,28 +246,26 @@ std::tr1::unordered_map<THREADID,v_clock*>::const_iterator threadgot = threadhas
 
 VOID ReleaseLock(VOID*ptr,THREADID threadid){
   
-  std::tr1::unordered_map<THREADID,v_clock*>::const_iterator threadgot = threadhashtable.find(threadid);
-  std::tr1::unordered_map<VOID*,v_clock*>::const_iterator lockgot = lockhashtable.find(ptr);
+  	std::tr1::unordered_map<THREADID,v_clock*>::const_iterator threadgot = threadhashtable.find(threadid);
+  	std::tr1::unordered_map<VOID*,v_clock*>::const_iterator lockgot = lockhashtable.find(ptr);
     
-    sulock++;
+    	sulock++;
     
-    if(lockgot!=lockhashtable.end()){
+    	if(lockgot!=lockhashtable.end()){
         
         for(int i =0; i < 3; i++){
-        if(threadgot->second->c[i] > lockgot->second->c[i]){
-            lockgot->second->c[i] = threadgot->second->c[i];
+        	if(threadgot->second->c[i] > lockgot->second->c[i]){
+            		lockgot->second->c[i] = threadgot->second->c[i];
             
-        }
-    }
+        	}
+    	}
        
         
     }
-    else if(lockgot == lockhashtable.end()){
-       
-    }
     
     
-        threadgot->second->c[threadid] +=1;
+    
+    threadgot->second->c[threadid] +=1;
 
 }
 
@@ -278,35 +276,35 @@ VOID ReleaseLock(VOID*ptr,THREADID threadid){
 VOID ThreadStart(THREADID threadid, CONTEXT *ctx, INT32 flags, VOID *v){
   PIN_GetLock(&lock, threadid+1);
   
-  numThreads++;
-  v_clock *clock = create_clock();
-   v_clock *mainclock = new v_clock;
-    mainclock->c = new int[3];
-    std::tr1::unordered_map<THREADID,v_clock*>::const_iterator got = threadhashtable.find(threadid);
- std::tr1::unordered_map<THREADID,v_clock*>::const_iterator gotagain =threadhashtable.find(0);
-    if(got==threadhashtable.end()){
+  	numThreads++;
+  	v_clock *clock = create_clock();
+	 v_clock *mainclock = new v_clock;
+    	mainclock->c = new int[3];
+    	std::tr1::unordered_map<THREADID,v_clock*>::const_iterator got = threadhashtable.find(threadid);
+ 	std::tr1::unordered_map<THREADID,v_clock*>::const_iterator gotagain =threadhashtable.find(0);
+    	if(got==threadhashtable.end()){
         
-        if(threadid!=0){
+        	if(threadid!=0){
            
-            //vector clock of thread is max of main thread and <0,0,0>
-            mainclock->c[0] = gotagain->second->c[0];
-            mainclock->c[1] = gotagain->second->c[1];
-            mainclock->c[2] = gotagain->second->c[2];
+            		//vector clock of thread is max of main thread and <0,0,0>
+            		mainclock->c[0] = gotagain->second->c[0];
+            		mainclock->c[1] = gotagain->second->c[1];
+            		mainclock->c[2] = gotagain->second->c[2];
             
-            mainclock->c[threadid]+=1;
+            		mainclock->c[threadid]+=1;
             
-        threadhashtable.insert(std::make_pair<THREADID,v_clock*>(threadid,mainclock));
+        		threadhashtable.insert(std::make_pair<THREADID,v_clock*>(threadid,mainclock));
             
-            //update main thread vector clock
-            gotagain->second->c[0]+=1;
+            		//update main thread vector clock
+            		gotagain->second->c[0]+=1;
    
             
-        }else{
+        	}else{
             //create main thread vector clock
      
-            threadhashtable.insert(std::make_pair<THREADID,v_clock*>(threadid,clock));
+            		threadhashtable.insert(std::make_pair<THREADID,v_clock*>(threadid,clock));
             
-        }
+        	}
     }
     
     
@@ -484,13 +482,14 @@ INT32 Usage()
 
 int main(int argc, char *argv[])
 {
+	
     PIN_InitLock(&lock);
     
     
     if (PIN_Init(argc, argv)) return Usage();
     PIN_InitSymbols();
     
-     OutFile.open(KnobOutputFile.Value().c_str());
+    OutFile.open(KnobOutputFile.Value().c_str());
     //trace = fopen("pinatrace.out","w");
 
  
@@ -503,7 +502,7 @@ int main(int argc, char *argv[])
     PIN_AddThreadStartFunction(ThreadStart,0);
     
    
-     IMG_AddInstrumentFunction(ImageLoad, 0);
+    IMG_AddInstrumentFunction(ImageLoad, 0);
     
     PIN_AddFiniFunction(Fini, 0);
     
